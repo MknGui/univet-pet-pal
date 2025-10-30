@@ -131,16 +131,4 @@ All colors MUST be HSL.
     background: var(--gradient-hero);
   }
   
-  /* Status badge variants */
-  .badge-success {
-    @apply bg-success/10 text-success border-success/20;
-  }
-  
-  .badge-warning {
-    @apply bg-warning/10 text-warning border-warning/20;
-  }
-  
-  .badge-pending {
-    @apply bg-muted text-muted-foreground border-border;
-  }
 }
