@@ -1,0 +1,177 @@
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { MobileLayout } from '@/components/MobileLayout';
+import { Activity, Calendar, Heart, BookOpen, Plus, Bell } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+const TutorDashboard = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const quickActions = [
+    {
+      icon: Activity,
+      label: 'Meus Animais',
+      description: 'Ver e gerenciar',
+      path: '/tutor/animals',
+      color: 'bg-blue-500/10 text-blue-600'
+    },
+    {
+      icon: Calendar,
+      label: 'Agendamentos',
+      description: 'Marcar consulta',
+      path: '/tutor/appointments',
+      color: 'bg-green-500/10 text-green-600'
+    },
+    {
+      icon: Heart,
+      label: 'Triagem Rápida',
+      description: 'Avaliar sinais',
+      path: '/tutor/triage',
+      color: 'bg-red-500/10 text-red-600'
+    },
+    {
+      icon: BookOpen,
+      label: 'Conteúdos',
+      description: 'Aprenda mais',
+      path: '/tutor/education',
+      color: 'bg-purple-500/10 text-purple-600'
+    }
+  ];
+
+  const upcomingAppointments = [
+    {
+      id: 1,
+      animal: 'Thor',
+      date: '2025-11-05',
+      time: '14:30',
+      vet: 'Dra. Maria Santos',
+      type: 'Consulta de rotina'
+    }
+  ];
+
+  return (
+    <MobileLayout>
+      <div className="gradient-hero pb-8">
+        {/* Header */}
+        <div className="px-6 pt-8 pb-6">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <p className="text-sm text-muted-foreground">Bem-vindo(a),</p>
+              <h1 className="text-2xl font-bold text-foreground">{user?.name}</h1>
+            </div>
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <Bell className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Quick Actions Grid */}
+        <div className="px-6 pb-6">
+          <div className="grid grid-cols-2 gap-3">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              return (
+                <button
+                  key={action.path}
+                  onClick={() => navigate(action.path)}
+                  className="mobile-card text-left hover:shadow-lg transition-all active:scale-95"
+                >
+                  <div className={`w-12 h-12 ${action.color} rounded-2xl flex items-center justify-center mb-3`}>
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-semibold text-sm mb-1">{action.label}</h3>
+                  <p className="text-xs text-muted-foreground">{action.description}</p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Upcoming Appointments */}
+      <div className="px-6 py-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Próximas Consultas</h2>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/tutor/appointments')}
+            className="text-primary"
+          >
+            Ver todas
+          </Button>
+        </div>
+
+        {upcomingAppointments.length > 0 ? (
+          <div className="space-y-3">
+            {upcomingAppointments.map((appointment) => (
+              <div key={appointment.id} className="mobile-card">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Calendar className="w-6 h-6 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <h3 className="font-semibold truncate">{appointment.animal}</h3>
+                      <span className="text-xs bg-success/10 text-success px-2 py-1 rounded-full whitespace-nowrap">
+                        Confirmado
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-1">{appointment.type}</p>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <span>{new Date(appointment.date).toLocaleDateString('pt-BR')}</span>
+                      <span>•</span>
+                      <span>{appointment.time}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Com {appointment.vet}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mobile-card text-center py-8">
+            <Calendar className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
+            <p className="text-sm text-muted-foreground mb-4">
+              Nenhuma consulta agendada
+            </p>
+            <Button
+              onClick={() => navigate('/tutor/appointments')}
+              size="sm"
+              className="gradient-primary"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Agendar Consulta
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* Quick Stats */}
+      <div className="px-6 pb-6">
+        <div className="grid grid-cols-3 gap-3">
+          <div className="mobile-card text-center">
+            <Activity className="w-6 h-6 text-primary mx-auto mb-2" />
+            <p className="text-2xl font-bold">2</p>
+            <p className="text-xs text-muted-foreground">Animais</p>
+          </div>
+          <div className="mobile-card text-center">
+            <Calendar className="w-6 h-6 text-primary mx-auto mb-2" />
+            <p className="text-2xl font-bold">1</p>
+            <p className="text-xs text-muted-foreground">Consulta</p>
+          </div>
+          <div className="mobile-card text-center">
+            <Heart className="w-6 h-6 text-primary mx-auto mb-2" />
+            <p className="text-2xl font-bold">5</p>
+            <p className="text-xs text-muted-foreground">Registros</p>
+          </div>
+        </div>
+      </div>
+    </MobileLayout>
+  );
+};
+
+export default TutorDashboard;
