@@ -9,10 +9,15 @@ import Register from "./pages/Register";
 import TutorDashboard from "./pages/tutor/Dashboard";
 import Animals from "./pages/tutor/Animals";
 import AnimalNew from "./pages/tutor/AnimalNew";
+import AnimalDetails from "./pages/tutor/AnimalDetails";
+import AnimalEdit from "./pages/tutor/AnimalEdit";
 import Triage from "./pages/tutor/Triage";
 import Appointments from "./pages/tutor/Appointments";
 import Education from "./pages/tutor/Education";
 import Profile from "./pages/tutor/Profile";
+import ProfileEdit from "./pages/tutor/ProfileEdit";
+import ProfileContact from "./pages/tutor/ProfileContact";
+import ProfileAddresses from "./pages/tutor/ProfileAddresses";
 import VetDashboard from "./pages/vet/Dashboard";
 import NotFound from "./pages/NotFound";
 
@@ -39,10 +44,15 @@ const App = () => (
             <Route path="/tutor/dashboard" element={<ProtectedRoute><TutorDashboard /></ProtectedRoute>} />
             <Route path="/tutor/animals" element={<ProtectedRoute><Animals /></ProtectedRoute>} />
             <Route path="/tutor/animal/new" element={<ProtectedRoute><AnimalNew /></ProtectedRoute>} />
+            <Route path="/tutor/animal/:id" element={<ProtectedRoute><AnimalDetails /></ProtectedRoute>} />
+            <Route path="/tutor/animal/:id/edit" element={<ProtectedRoute><AnimalEdit /></ProtectedRoute>} />
             <Route path="/tutor/triage" element={<ProtectedRoute><Triage /></ProtectedRoute>} />
             <Route path="/tutor/appointments" element={<ProtectedRoute><Appointments /></ProtectedRoute>} />
             <Route path="/tutor/education" element={<ProtectedRoute><Education /></ProtectedRoute>} />
             <Route path="/tutor/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/tutor/profile/edit" element={<ProtectedRoute><ProfileEdit /></ProtectedRoute>} />
+            <Route path="/tutor/profile/contact" element={<ProtectedRoute><ProfileContact /></ProtectedRoute>} />
+            <Route path="/tutor/profile/addresses" element={<ProtectedRoute><ProfileAddresses /></ProtectedRoute>} />
             
             {/* Veterinarian Routes */}
             <Route path="/vet/dashboard" element={<ProtectedRoute><VetDashboard /></ProtectedRoute>} />
