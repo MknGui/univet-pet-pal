@@ -11,14 +11,24 @@ import Animals from "./pages/tutor/Animals";
 import AnimalNew from "./pages/tutor/AnimalNew";
 import AnimalDetails from "./pages/tutor/AnimalDetails";
 import AnimalEdit from "./pages/tutor/AnimalEdit";
+import AnimalHistory from "./pages/tutor/AnimalHistory";
 import Triage from "./pages/tutor/Triage";
 import Appointments from "./pages/tutor/Appointments";
+import AppointmentNew from "./pages/tutor/AppointmentNew";
+import AppointmentDetail from "./pages/tutor/AppointmentDetail";
 import Education from "./pages/tutor/Education";
 import Profile from "./pages/tutor/Profile";
 import ProfileEdit from "./pages/tutor/ProfileEdit";
 import ProfileContact from "./pages/tutor/ProfileContact";
 import ProfileAddresses from "./pages/tutor/ProfileAddresses";
 import VetDashboard from "./pages/vet/Dashboard";
+import ConsultationNew from "./pages/vet/ConsultationNew";
+import Consultations from "./pages/vet/Consultations";
+import ConsultationDetail from "./pages/vet/ConsultationDetail";
+import VetAppointments from "./pages/vet/VetAppointments";
+import VetAppointmentDetail from "./pages/vet/AppointmentDetail";
+import VetProfile from "./pages/vet/Profile";
+import VetProfileEdit from "./pages/vet/ProfileEdit";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,8 +56,11 @@ const App = () => (
             <Route path="/tutor/animal/new" element={<ProtectedRoute><AnimalNew /></ProtectedRoute>} />
             <Route path="/tutor/animal/:id" element={<ProtectedRoute><AnimalDetails /></ProtectedRoute>} />
             <Route path="/tutor/animal/:id/edit" element={<ProtectedRoute><AnimalEdit /></ProtectedRoute>} />
+            <Route path="/tutor/animal/:id/history" element={<ProtectedRoute><AnimalHistory /></ProtectedRoute>} />
             <Route path="/tutor/triage" element={<ProtectedRoute><Triage /></ProtectedRoute>} />
             <Route path="/tutor/appointments" element={<ProtectedRoute><Appointments /></ProtectedRoute>} />
+            <Route path="/tutor/appointment/new" element={<ProtectedRoute><AppointmentNew /></ProtectedRoute>} />
+            <Route path="/tutor/appointment/:id" element={<ProtectedRoute><AppointmentDetail /></ProtectedRoute>} />
             <Route path="/tutor/education" element={<ProtectedRoute><Education /></ProtectedRoute>} />
             <Route path="/tutor/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/tutor/profile/edit" element={<ProtectedRoute><ProfileEdit /></ProtectedRoute>} />
@@ -56,6 +69,13 @@ const App = () => (
             
             {/* Veterinarian Routes */}
             <Route path="/vet/dashboard" element={<ProtectedRoute><VetDashboard /></ProtectedRoute>} />
+            <Route path="/vet/consultation/new" element={<ProtectedRoute><ConsultationNew /></ProtectedRoute>} />
+            <Route path="/vet/consultations" element={<ProtectedRoute><Consultations /></ProtectedRoute>} />
+            <Route path="/vet/consultation/:id" element={<ProtectedRoute><ConsultationDetail /></ProtectedRoute>} />
+            <Route path="/vet/appointments" element={<ProtectedRoute><VetAppointments /></ProtectedRoute>} />
+            <Route path="/vet/appointment/:id" element={<ProtectedRoute><VetAppointmentDetail /></ProtectedRoute>} />
+            <Route path="/vet/profile" element={<ProtectedRoute><VetProfile /></ProtectedRoute>} />
+            <Route path="/vet/profile/edit" element={<ProtectedRoute><VetProfileEdit /></ProtectedRoute>} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

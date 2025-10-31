@@ -46,13 +46,13 @@ const Appointments = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return 'badge-success';
+        return 'bg-success/10 text-success border-success/20';
       case 'pending':
-        return 'badge-warning';
+        return 'bg-warning/10 text-warning border-warning/20';
       case 'completed':
-        return 'badge-pending';
+        return 'bg-muted text-muted-foreground border-border';
       default:
-        return 'badge-pending';
+        return 'bg-muted text-muted-foreground border-border';
     }
   };
 
@@ -122,16 +122,18 @@ const Appointments = () => {
                 </p>
               </div>
 
-              {appointment.status === 'confirmed' && (
-                <div className="flex gap-2 mt-4">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    Cancelar
-                  </Button>
-                  <Button size="sm" className="flex-1 gradient-primary">
-                    Ver Detalhes
-                  </Button>
-                </div>
-              )}
+              <div className="flex gap-2 mt-4">
+                <Button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/tutor/appointment/${appointment.id}`);
+                  }}
+                  size="sm" 
+                  className="flex-1 gradient-primary"
+                >
+                  Ver Detalhes
+                </Button>
+              </div>
             </div>
           ))
         ) : (

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MobileLayout } from '@/components/MobileLayout';
 import { MobileHeader } from '@/components/MobileHeader';
@@ -16,26 +16,13 @@ interface Animal {
 
 const Animals = () => {
   const navigate = useNavigate();
-  
-  // Mock data - substituir por dados reais do localStorage
-  const [animals] = useState<Animal[]>([
-    {
-      id: '1',
-      name: 'Thor',
-      species: 'dog',
-      breed: 'Golden Retriever',
-      age: '3 anos',
-      sex: 'male'
-    },
-    {
-      id: '2',
-      name: 'Luna',
-      species: 'cat',
-      breed: 'Siamês',
-      age: '2 anos',
-      sex: 'female'
-    }
-  ]);
+  const [animals, setAnimals] = useState<Animal[]>([]);
+
+  useEffect(() => {
+    // Carregar animais do localStorage
+    const storedAnimals = JSON.parse(localStorage.getItem('univet_animals') || '[]');
+    setAnimals(storedAnimals);
+  }, []);
 
   const getSpeciesIcon = (species: string) => {
     switch (species) {

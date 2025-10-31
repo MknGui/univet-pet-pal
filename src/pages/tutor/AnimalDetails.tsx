@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { MobileLayout } from '@/components/MobileLayout';
 import { MobileHeader } from '@/components/MobileHeader';
 import { Button } from '@/components/ui/button';
-import { Dog, Cat, Calendar, Edit, Trash2 } from 'lucide-react';
+import { Dog, Cat, Calendar, Edit, Trash2, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -101,13 +101,28 @@ const AnimalDetails = () => {
             <span className="text-sm">Nova Triagem</span>
           </Button>
           <Button
-            onClick={() => navigate('/tutor/appointments')}
+            onClick={() => navigate('/tutor/appointment/new')}
             variant="outline"
             className="h-20 flex flex-col gap-2"
           >
             <Calendar className="w-6 h-6" />
             <span className="text-sm">Agendar</span>
           </Button>
+        </div>
+
+        {/* Animal History */}
+        <div className="mobile-card">
+          <h3 className="font-semibold mb-4">Histórico do Animal</h3>
+          <div className="space-y-3">
+            <Button
+              onClick={() => navigate(`/tutor/animal/${id}/history`)}
+              variant="outline"
+              className="w-full justify-between"
+            >
+              <span>Ver Histórico Completo</span>
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Action Buttons */}
