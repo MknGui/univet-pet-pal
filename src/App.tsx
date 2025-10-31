@@ -17,6 +17,8 @@ import Appointments from "./pages/tutor/Appointments";
 import AppointmentNew from "./pages/tutor/AppointmentNew";
 import AppointmentDetail from "./pages/tutor/AppointmentDetail";
 import Education from "./pages/tutor/Education";
+import EducationDetail from "./pages/tutor/EducationDetail";
+import Notifications from "./pages/tutor/Notifications";
 import Profile from "./pages/tutor/Profile";
 import ProfileEdit from "./pages/tutor/ProfileEdit";
 import ProfileContact from "./pages/tutor/ProfileContact";
@@ -62,6 +64,8 @@ const App = () => (
             <Route path="/tutor/appointment/new" element={<ProtectedRoute><AppointmentNew /></ProtectedRoute>} />
             <Route path="/tutor/appointment/:id" element={<ProtectedRoute><AppointmentDetail /></ProtectedRoute>} />
             <Route path="/tutor/education" element={<ProtectedRoute><Education /></ProtectedRoute>} />
+            <Route path="/tutor/education/:id" element={<ProtectedRoute><EducationDetail /></ProtectedRoute>} />
+            <Route path="/tutor/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
             <Route path="/tutor/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
             <Route path="/tutor/profile/edit" element={<ProtectedRoute><ProfileEdit /></ProtectedRoute>} />
             <Route path="/tutor/profile/contact" element={<ProtectedRoute><ProfileContact /></ProtectedRoute>} />

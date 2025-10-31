@@ -114,12 +114,16 @@ const VetDashboard = () => {
         {upcomingAppointments.length > 0 ? (
           <div className="space-y-3">
             {upcomingAppointments.map((appointment) => (
-              <div key={appointment.id} className="mobile-card">
+              <button
+                key={appointment.id}
+                onClick={() => navigate('/vet/appointments')}
+                className="w-full mobile-card hover:shadow-lg transition-all active:scale-95"
+              >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Clock className="w-6 h-6 text-primary" />
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 text-left">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold">{appointment.time}</h3>
                       <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
@@ -133,7 +137,7 @@ const VetDashboard = () => {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         ) : (

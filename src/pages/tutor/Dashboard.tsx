@@ -60,7 +60,12 @@ const TutorDashboard = () => {
               <p className="text-sm text-muted-foreground">Bem-vindo(a),</p>
               <h1 className="text-2xl font-bold text-foreground">{user?.name}</h1>
             </div>
-            <Button variant="ghost" size="icon" className="rounded-full">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="rounded-full"
+              onClick={() => navigate('/tutor/notifications')}
+            >
               <Bell className="h-5 w-5" />
             </Button>
           </div>
@@ -106,12 +111,16 @@ const TutorDashboard = () => {
         {upcomingAppointments.length > 0 ? (
           <div className="space-y-3">
             {upcomingAppointments.map((appointment) => (
-              <div key={appointment.id} className="mobile-card">
+              <button
+                key={appointment.id}
+                onClick={() => navigate('/tutor/appointments')}
+                className="w-full mobile-card hover:shadow-lg transition-all active:scale-95"
+              >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Calendar className="w-6 h-6 text-primary" />
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 text-left">
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <h3 className="font-semibold truncate">{appointment.animal}</h3>
                       <span className="text-xs bg-success/10 text-success px-2 py-1 rounded-full whitespace-nowrap">
@@ -129,7 +138,7 @@ const TutorDashboard = () => {
                     </p>
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         ) : (

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MobileLayout } from '@/components/MobileLayout';
 import { MobileHeader } from '@/components/MobileHeader';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ interface Content {
 }
 
 const Education = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const categories = [
@@ -117,6 +119,7 @@ const Education = () => {
             return (
               <button
                 key={content.id}
+                onClick={() => navigate(`/tutor/education/${content.id}`)}
                 className="w-full mobile-card text-left hover:shadow-lg transition-all active:scale-95"
               >
                 <div className="flex gap-4">

@@ -131,4 +131,41 @@ All colors MUST be HSL.
     background: var(--gradient-hero);
   }
   
+  /* Prose styles for educational content */
+  .prose {
+    @apply text-foreground leading-7;
+  }
+  
+  .prose h2 {
+    @apply text-xl font-bold mb-4 mt-6 text-foreground;
+  }
+  
+  .prose h3 {
+    @apply text-lg font-semibold mb-3 mt-5 text-foreground;
+  }
+  
+  .prose p {
+    @apply mb-4 text-muted-foreground;
+  }
+  
+  .prose ul, .prose ol {
+    @apply mb-4 ml-6 space-y-2;
+  }
+  
+  .prose ul {
+    @apply list-disc;
+  }
+  
+  .prose ol {
+    @apply list-decimal;
+  }
+  
+  .prose li {
+    @apply text-muted-foreground;
+  }
+  
+  .prose strong {
+    @apply font-semibold text-foreground;
+  }
+  
 }
