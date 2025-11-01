@@ -29,6 +29,7 @@ import Consultations from "./pages/vet/Consultations";
 import ConsultationDetail from "./pages/vet/ConsultationDetail";
 import VetAppointments from "./pages/vet/VetAppointments";
 import VetAppointmentDetail from "./pages/vet/AppointmentDetail";
+import VetNotifications from "./pages/vet/Notifications";
 import VetProfile from "./pages/vet/Profile";
 import VetProfileEdit from "./pages/vet/ProfileEdit";
 import NotFound from "./pages/NotFound";
@@ -78,6 +79,7 @@ const App = () => (
             <Route path="/vet/consultation/:id" element={<ProtectedRoute><ConsultationDetail /></ProtectedRoute>} />
             <Route path="/vet/appointments" element={<ProtectedRoute><VetAppointments /></ProtectedRoute>} />
             <Route path="/vet/appointment/:id" element={<ProtectedRoute><VetAppointmentDetail /></ProtectedRoute>} />
+            <Route path="/vet/notifications" element={<ProtectedRoute><VetNotifications /></ProtectedRoute>} />
             <Route path="/vet/profile" element={<ProtectedRoute><VetProfile /></ProtectedRoute>} />
             <Route path="/vet/profile/edit" element={<ProtectedRoute><VetProfileEdit /></ProtectedRoute>} />
             

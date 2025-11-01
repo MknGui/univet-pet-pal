@@ -63,7 +63,7 @@ const VetDashboard = () => {
               variant="ghost" 
               size="icon" 
               className="rounded-full"
-              onClick={() => navigate('/tutor/notifications')}
+              onClick={() => navigate('/vet/notifications')}
             >
               <Bell className="h-5 w-5" />
             </Button>
