@@ -59,7 +59,12 @@ const VetDashboard = () => {
                 <p className="text-sm text-primary font-medium mt-1">{user.crmv}</p>
               )}
             </div>
-            <Button variant="ghost" size="icon" className="rounded-full">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="rounded-full"
+              onClick={() => navigate('/tutor/notifications')}
+            >
               <Bell className="h-5 w-5" />
             </Button>
           </div>

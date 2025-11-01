@@ -55,7 +55,7 @@ const ConsultationNew = () => {
   };
 
   return (
-    <MobileLayout showBottomNav={false}>
+    <MobileLayout>
       <MobileHeader title="Registrar Consulta" showBack />
 
       <div className="px-6 py-6">
