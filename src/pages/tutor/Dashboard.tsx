@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { MobileLayout } from '@/components/MobileLayout';
-import { Activity, Calendar, Heart, BookOpen, Plus, Bell } from 'lucide-react';
+import { Activity, Calendar, Heart, BookOpen, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CardAgendamento } from '@/components/cards/CardAgendamento';
+import { mockAppointments, mockAnimals, getUnreadNotifications, getConsultationsByAnimalId } from '@/data/mockData';
 
 const TutorDashboard = () => {
   const navigate = useNavigate();
@@ -39,16 +41,14 @@ const TutorDashboard = () => {
     }
   ];
 
-  const upcomingAppointments = [
-    {
-      id: 1,
-      animal: 'Thor',
-      date: '2025-11-05',
-      time: '14:30',
-      vet: 'Dra. Maria Santos',
-      type: 'Consulta de rotina'
-    }
-  ];
+  // Filter tutor's upcoming appointments
+  const tutorAppointments = mockAppointments.filter(
+    apt => apt.tutorId === 'tutor1' && apt.status !== 'completed'
+  );
+  
+  const upcomingAppointments = tutorAppointments.slice(0, 2);
+  const tutorAnimals = mockAnimals.filter(a => a.tutorId === 'tutor1');
+  const unreadCount = getUnreadNotifications().length;
 
   return (
     <MobileLayout>
@@ -63,10 +63,13 @@ const TutorDashboard = () => {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="rounded-full"
+              className="rounded-full relative"
               onClick={() => navigate('/tutor/notifications')}
             >
               <Bell className="h-5 w-5" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
+              )}
             </Button>
           </div>
         </div>
@@ -111,34 +114,11 @@ const TutorDashboard = () => {
         {upcomingAppointments.length > 0 ? (
           <div className="space-y-3">
             {upcomingAppointments.map((appointment) => (
-              <button
+              <CardAgendamento
                 key={appointment.id}
-                onClick={() => navigate('/tutor/appointments')}
-                className="w-full mobile-card hover:shadow-lg transition-all active:scale-95"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Calendar className="w-6 h-6 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0 text-left">
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <h3 className="font-semibold truncate">{appointment.animal}</h3>
-                      <span className="text-xs bg-success/10 text-success px-2 py-1 rounded-full whitespace-nowrap">
-                        Confirmado
-                      </span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-1">{appointment.type}</p>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <span>{new Date(appointment.date).toLocaleDateString('pt-BR')}</span>
-                      <span>•</span>
-                      <span>{appointment.time}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Com {appointment.vet}
-                    </p>
-                  </div>
-                </div>
-              </button>
+                appointment={appointment}
+                onClick={() => navigate(`/tutor/appointment/${appointment.id}`)}
+              />
             ))}
           </div>
         ) : (
@@ -148,11 +128,10 @@ const TutorDashboard = () => {
               Nenhuma consulta agendada
             </p>
             <Button
-              onClick={() => navigate('/tutor/appointments')}
+              onClick={() => navigate('/tutor/appointment/new')}
               size="sm"
               className="gradient-primary"
             >
-              <Plus className="w-4 h-4 mr-2" />
               Agendar Consulta
             </Button>
           </div>
@@ -164,18 +143,18 @@ const TutorDashboard = () => {
         <div className="grid grid-cols-3 gap-3">
           <div className="mobile-card text-center">
             <Activity className="w-6 h-6 text-primary mx-auto mb-2" />
-            <p className="text-2xl font-bold">2</p>
+            <p className="text-2xl font-bold">{tutorAnimals.length}</p>
             <p className="text-xs text-muted-foreground">Animais</p>
           </div>
           <div className="mobile-card text-center">
             <Calendar className="w-6 h-6 text-primary mx-auto mb-2" />
-            <p className="text-2xl font-bold">1</p>
-            <p className="text-xs text-muted-foreground">Consulta</p>
+            <p className="text-2xl font-bold">{upcomingAppointments.length}</p>
+            <p className="text-xs text-muted-foreground">Próximas</p>
           </div>
           <div className="mobile-card text-center">
             <Heart className="w-6 h-6 text-primary mx-auto mb-2" />
-            <p className="text-2xl font-bold">5</p>
-            <p className="text-xs text-muted-foreground">Registros</p>
+            <p className="text-2xl font-bold">{tutorAnimals.reduce((acc, a) => acc + (getConsultationsByAnimalId(a.id).length || 0), 0)}</p>
+            <p className="text-xs text-muted-foreground">Consultas</p>
           </div>
         </div>
       </div>

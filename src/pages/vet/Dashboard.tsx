@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { MobileLayout } from '@/components/MobileLayout';
-import { Stethoscope, Calendar, ClipboardList, Bell, Plus, Clock } from 'lucide-react';
+import { Stethoscope, Calendar, ClipboardList, Bell, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CardAgendamento } from '@/components/cards/CardAgendamento';
+import { mockAppointments, mockConsultations } from '@/data/mockData';
 
 const VetDashboard = () => {
   const navigate = useNavigate();
@@ -32,24 +34,17 @@ const VetDashboard = () => {
     },
   ];
 
-  const upcomingAppointments = [
-    {
-      id: 1,
-      animal: 'Thor',
-      tutor: 'João Silva',
-      date: '2025-11-05',
-      time: '14:30',
-      type: 'Consulta de rotina'
-    },
-    {
-      id: 2,
-      animal: 'Luna',
-      tutor: 'Maria Santos',
-      date: '2025-11-05',
-      time: '15:30',
-      type: 'Vacinação'
-    }
-  ];
+  // Filter vet's appointments for today
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const todayAppointments = mockAppointments.filter(apt => {
+    const aptDate = new Date(apt.date);
+    aptDate.setHours(0, 0, 0, 0);
+    return apt.vetId === 'vet1' && aptDate.getTime() === today.getTime();
+  });
+
+  const vetConsultations = mockConsultations.filter(c => c.vetId === 'vet1');
 
   return (
     <MobileLayout>
@@ -111,33 +106,15 @@ const VetDashboard = () => {
           </Button>
         </div>
 
-        {upcomingAppointments.length > 0 ? (
+        {todayAppointments.length > 0 ? (
           <div className="space-y-3">
-            {upcomingAppointments.map((appointment) => (
-              <button
+            {todayAppointments.map((appointment) => (
+              <CardAgendamento
                 key={appointment.id}
-                onClick={() => navigate('/vet/appointments')}
-                className="w-full mobile-card hover:shadow-lg transition-all active:scale-95"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-6 h-6 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0 text-left">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold">{appointment.time}</h3>
-                      <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                        {appointment.type}
-                      </span>
-                    </div>
-                    <p className="text-sm mb-1">
-                      <span className="font-medium">{appointment.animal}</span>
-                      {' • '}
-                      <span className="text-muted-foreground">Tutor: {appointment.tutor}</span>
-                    </p>
-                  </div>
-                </div>
-              </button>
+                appointment={appointment}
+                onClick={() => navigate(`/vet/appointment/${appointment.id}`)}
+                showTutor={true}
+              />
             ))}
           </div>
         ) : (
@@ -155,18 +132,18 @@ const VetDashboard = () => {
         <div className="grid grid-cols-3 gap-3">
           <div className="mobile-card text-center">
             <Stethoscope className="w-6 h-6 text-primary mx-auto mb-2" />
-            <p className="text-2xl font-bold">12</p>
+            <p className="text-2xl font-bold">{vetConsultations.length}</p>
             <p className="text-xs text-muted-foreground">Consultas</p>
           </div>
           <div className="mobile-card text-center">
             <Calendar className="w-6 h-6 text-primary mx-auto mb-2" />
-            <p className="text-2xl font-bold">2</p>
+            <p className="text-2xl font-bold">{todayAppointments.length}</p>
             <p className="text-xs text-muted-foreground">Hoje</p>
           </div>
           <div className="mobile-card text-center">
             <ClipboardList className="w-6 h-6 text-primary mx-auto mb-2" />
-            <p className="text-2xl font-bold">45</p>
-            <p className="text-xs text-muted-foreground">Registros</p>
+            <p className="text-2xl font-bold">{vetConsultations.filter(c => c.status === 'completed').length}</p>
+            <p className="text-xs text-muted-foreground">Concluídas</p>
           </div>
         </div>
       </div>

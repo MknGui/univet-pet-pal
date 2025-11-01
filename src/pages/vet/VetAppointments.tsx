@@ -2,123 +2,93 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MobileLayout } from '@/components/MobileLayout';
 import { MobileHeader } from '@/components/MobileHeader';
-import { Calendar, Clock, User, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
-
-interface Appointment {
-  id: string;
-  animal: string;
-  tutor: string;
-  date: string;
-  time: string;
-  type: string;
-  status: 'pending' | 'confirmed' | 'completed';
-}
+import { Button } from '@/components/ui/button';
+import { Calendar } from 'lucide-react';
+import { CardAgendamento } from '@/components/cards/CardAgendamento';
+import { mockAppointments } from '@/data/mockData';
 
 const VetAppointments = () => {
   const navigate = useNavigate();
+  const [filter, setFilter] = useState<'today' | 'upcoming' | 'past'>('today');
+
+  // Filter vet's appointments (assuming vetId = 'vet1')
+  const vetAppointments = mockAppointments.filter(apt => apt.vetId === 'vet1');
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   
-  const [appointments] = useState<Appointment[]>([
-    {
-      id: '1',
-      animal: 'Thor',
-      tutor: 'João Silva',
-      date: '2025-11-05',
-      time: '14:30',
-      type: 'Consulta de rotina',
-      status: 'confirmed'
-    },
-    {
-      id: '2',
-      animal: 'Luna',
-      tutor: 'Maria Santos',
-      date: '2025-11-05',
-      time: '15:30',
-      type: 'Vacinação',
-      status: 'pending'
-    },
-    {
-      id: '3',
-      animal: 'Max',
-      tutor: 'Pedro Costa',
-      date: '2025-11-04',
-      time: '10:00',
-      type: 'Retorno',
-      status: 'completed'
-    }
-  ]);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return 'bg-success/10 text-success border-success/20';
-      case 'pending':
-        return 'bg-warning/10 text-warning border-warning/20';
-      case 'completed':
-        return 'bg-muted text-muted-foreground border-border';
-      default:
-        return 'bg-muted text-muted-foreground border-border';
+  const filteredAppointments = vetAppointments.filter(apt => {
+    const aptDate = new Date(apt.date);
+    aptDate.setHours(0, 0, 0, 0);
+    
+    if (filter === 'today') {
+      return aptDate.getTime() === today.getTime();
+    } else if (filter === 'upcoming') {
+      return aptDate >= tomorrow && apt.status !== 'completed';
+    } else {
+      return aptDate < today || apt.status === 'completed';
     }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return 'Confirmado';
-      case 'pending':
-        return 'Pendente';
-      case 'completed':
-        return 'Concluído';
-      default:
-        return status;
-    }
-  };
+  });
 
   return (
     <MobileLayout>
       <MobileHeader title="Agenda" />
 
       <div className="px-6 py-6 space-y-4">
-        {appointments.map((appointment) => (
-          <button
-            key={appointment.id}
-            onClick={() => navigate(`/vet/appointment/${appointment.id}`)}
-            className="w-full mobile-card hover:shadow-lg transition-all active:scale-95"
+        {/* Filter Tabs */}
+        <div className="flex gap-2">
+          <Button
+            variant={filter === 'today' ? 'default' : 'outline'}
+            onClick={() => setFilter('today')}
+            className="flex-1"
           >
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-primary" />
-                </div>
-                <div className="text-left">
-                  <h3 className="font-semibold">{appointment.animal}</h3>
-                  <p className="text-xs text-muted-foreground">{appointment.type}</p>
-                </div>
-              </div>
-              <span className={cn(
-                "text-xs px-2 py-1 rounded-full border font-medium",
-                getStatusBadge(appointment.status)
-              )}>
-                {getStatusLabel(appointment.status)}
-              </span>
-            </div>
+            Hoje
+          </Button>
+          <Button
+            variant={filter === 'upcoming' ? 'default' : 'outline'}
+            onClick={() => setFilter('upcoming')}
+            className="flex-1"
+          >
+            Próximas
+          </Button>
+          <Button
+            variant={filter === 'past' ? 'default' : 'outline'}
+            onClick={() => setFilter('past')}
+            className="flex-1"
+          >
+            Anteriores
+          </Button>
+        </div>
 
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Clock className="w-4 h-4" />
-                <span>
-                  {new Date(appointment.date).toLocaleDateString('pt-BR')} às {appointment.time}
-                </span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            </div>
-
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
-              <User className="w-4 h-4" />
-              <span>Tutor: {appointment.tutor}</span>
-            </div>
-          </button>
-        ))}
+        {filteredAppointments.length > 0 ? (
+          <div className="space-y-3">
+            {filteredAppointments.map((appointment) => (
+              <CardAgendamento
+                key={appointment.id}
+                appointment={appointment}
+                onClick={() => navigate(`/vet/appointment/${appointment.id}`)}
+                showTutor={true}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="mobile-card text-center py-12">
+            <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+            <h3 className="font-semibold text-lg mb-2">
+              {filter === 'today' && 'Nenhum agendamento para hoje'}
+              {filter === 'upcoming' && 'Nenhum agendamento futuro'}
+              {filter === 'past' && 'Nenhum agendamento anterior'}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {filter === 'today' && 'Você não possui consultas agendadas para hoje'}
+              {filter === 'upcoming' && 'Não há consultas futuras agendadas'}
+              {filter === 'past' && 'Você ainda não possui consultas anteriores'}
+            </p>
+          </div>
+        )}
       </div>
     </MobileLayout>
   );

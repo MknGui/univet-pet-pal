@@ -1,64 +1,76 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MobileLayout } from '@/components/MobileLayout';
 import { MobileHeader } from '@/components/MobileHeader';
 import { Button } from '@/components/ui/button';
-import { Stethoscope, Calendar, ChevronRight } from 'lucide-react';
-
-interface Consultation {
-  id: string;
-  animalName: string;
-  date: string;
-  diagnosis: string;
-  treatment: string;
-  createdAt: string;
-}
+import { Plus, Stethoscope } from 'lucide-react';
+import { CardConsulta } from '@/components/cards/CardConsulta';
+import { mockConsultations } from '@/data/mockData';
 
 const Consultations = () => {
   const navigate = useNavigate();
-  const [consultations, setConsultations] = useState<Consultation[]>([]);
+  const [filter, setFilter] = useState<'all' | 'completed' | 'scheduled'>('all');
 
-  useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('univet_consultations') || '[]');
-    // Ordenar por data mais recente
-    const sorted = stored.sort((a: Consultation, b: Consultation) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-    setConsultations(sorted);
-  }, []);
+  // Filter vet's consultations (assuming vetId = 'vet1')
+  const vetConsultations = mockConsultations.filter(cons => cons.vetId === 'vet1');
+
+  const filteredConsultations = vetConsultations.filter(cons => {
+    if (filter === 'all') return true;
+    return cons.status === filter;
+  });
 
   return (
     <MobileLayout>
-      <MobileHeader title="Minhas Consultas" />
+      <MobileHeader
+        title="Minhas Consultas"
+        action={
+          <Button
+            size="icon"
+            onClick={() => navigate('/vet/consultation/new')}
+            className="h-9 w-9 gradient-primary"
+          >
+            <Plus className="h-5 w-5" />
+          </Button>
+        }
+      />
 
       <div className="px-6 py-6 space-y-4">
-        {consultations.length > 0 ? (
-          consultations.map((consultation) => (
-            <button
-              key={consultation.id}
-              onClick={() => navigate(`/vet/consultation/${consultation.id}`)}
-              className="w-full mobile-card hover:shadow-lg transition-all active:scale-95"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Stethoscope className="w-6 h-6 text-primary" />
-                </div>
+        {/* Filter Tabs */}
+        <div className="flex gap-2">
+          <Button
+            variant={filter === 'all' ? 'default' : 'outline'}
+            onClick={() => setFilter('all')}
+            className="flex-1"
+          >
+            Todas
+          </Button>
+          <Button
+            variant={filter === 'scheduled' ? 'default' : 'outline'}
+            onClick={() => setFilter('scheduled')}
+            className="flex-1"
+          >
+            Agendadas
+          </Button>
+          <Button
+            variant={filter === 'completed' ? 'default' : 'outline'}
+            onClick={() => setFilter('completed')}
+            className="flex-1"
+          >
+            Concluídas
+          </Button>
+        </div>
 
-                <div className="flex-1 text-left min-w-0">
-                  <h3 className="font-semibold mb-1">{consultation.animalName}</h3>
-                  <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                    {consultation.diagnosis}
-                  </p>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Calendar className="w-3 h-3" />
-                    <span>{new Date(consultation.date).toLocaleDateString('pt-BR')}</span>
-                  </div>
-                </div>
-
-                <ChevronRight className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-              </div>
-            </button>
-          ))
+        {filteredConsultations.length > 0 ? (
+          <div className="space-y-3">
+            {filteredConsultations.map((consultation) => (
+              <CardConsulta
+                key={consultation.id}
+                consultation={consultation}
+                onClick={() => navigate(`/vet/consultation/${consultation.id}`)}
+                showTutor={true}
+              />
+            ))}
+          </div>
         ) : (
           <div className="mobile-card text-center py-12">
             <Stethoscope className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
@@ -70,6 +82,7 @@ const Consultations = () => {
               onClick={() => navigate('/vet/consultation/new')}
               className="gradient-primary"
             >
+              <Plus className="w-4 h-4 mr-2" />
               Registrar Consulta
             </Button>
           </div>
