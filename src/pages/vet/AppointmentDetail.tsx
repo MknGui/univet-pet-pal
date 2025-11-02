@@ -3,13 +3,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { MobileLayout } from '@/components/MobileLayout';
 import { MobileHeader } from '@/components/MobileHeader';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, User, FileText, CheckCircle, XCircle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Calendar, Clock, User, FileText, CheckCircle, XCircle, Syringe, Activity, FileSpreadsheet } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { mockAnimals, getTriagesByAnimalId, getConsultationsByAnimalId, getVaccinesByAnimalId } from '@/data/mockData';
 
 interface Appointment {
   id: string;
   animal: string;
+  animalId: string;
   tutor: string;
   date: string;
   time: string;
@@ -22,13 +25,18 @@ const AppointmentDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [appointment, setAppointment] = useState<Appointment | null>(null);
+  const [animalData, setAnimalData] = useState<any>(null);
+  const [triages, setTriages] = useState<any[]>([]);
+  const [consultations, setConsultations] = useState<any[]>([]);
+  const [vaccines, setVaccines] = useState<any[]>([]);
 
   useEffect(() => {
-    // Mock data - em produção viria do localStorage ou API
+    // Mock data
     const mockAppointments: Appointment[] = [
       {
         id: '1',
         animal: 'Thor',
+        animalId: 'animal1',
         tutor: 'João Silva',
         date: '2025-11-05',
         time: '14:30',
@@ -39,6 +47,7 @@ const AppointmentDetail = () => {
       {
         id: '2',
         animal: 'Luna',
+        animalId: 'animal2',
         tutor: 'Maria Santos',
         date: '2025-11-05',
         time: '15:30',
@@ -56,6 +65,15 @@ const AppointmentDetail = () => {
     }
     
     setAppointment(found);
+    
+    // Load animal data
+    const animal = mockAnimals.find(a => a.id === found.animalId);
+    setAnimalData(animal);
+    
+    // Load related data
+    setTriages(getTriagesByAnimalId(found.animalId));
+    setConsultations(getConsultationsByAnimalId(found.animalId));
+    setVaccines(getVaccinesByAnimalId(found.animalId));
   }, [id, navigate]);
 
   const handleConfirm = () => {
@@ -66,7 +84,7 @@ const AppointmentDetail = () => {
   };
 
   const handleComplete = () => {
-    toast.success('Agendamento concluído');
+    toast.success('Redirecionando para registro de consulta');
     navigate('/vet/consultation/new');
   };
 
@@ -147,6 +165,144 @@ const AppointmentDetail = () => {
             </div>
           </div>
         </div>
+
+        {/* Animal Details Tabs */}
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="profile">Perfil</TabsTrigger>
+            <TabsTrigger value="triages">Triagens</TabsTrigger>
+            <TabsTrigger value="history">Histórico</TabsTrigger>
+            <TabsTrigger value="vaccines">Vacinas</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="profile" className="mt-4">
+            <div className="mobile-card space-y-3">
+              <h3 className="font-semibold mb-3">Perfil do Animal</h3>
+              {animalData ? (
+                <>
+                  <div className="flex justify-between py-2 border-b border-border">
+                    <span className="text-muted-foreground">Espécie</span>
+                    <span className="font-medium">
+                      {animalData.species === 'dog' ? 'Cachorro' : 'Gato'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border">
+                    <span className="text-muted-foreground">Raça</span>
+                    <span className="font-medium">{animalData.breed}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-border">
+                    <span className="text-muted-foreground">Idade</span>
+                    <span className="font-medium">{animalData.age}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-muted-foreground">Sexo</span>
+                    <span className="font-medium">
+                      {animalData.sex === 'male' ? 'Macho' : 'Fêmea'}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground">Dados não disponíveis</p>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="triages" className="mt-4">
+            <div className="mobile-card">
+              <h3 className="font-semibold mb-3 flex items-center gap-2">
+                <Activity className="w-5 h-5" />
+                Triagens Realizadas
+              </h3>
+              {triages.length > 0 ? (
+                <div className="space-y-3">
+                  {triages.map((triage) => (
+                    <div key={triage.id} className="border border-border rounded-lg p-3">
+                      <div className="flex justify-between items-start mb-2">
+                        <p className="text-sm font-medium">{triage.symptoms.join(', ')}</p>
+                        <span className={`text-xs px-2 py-1 rounded ${
+                          triage.urgency === 'high' ? 'bg-red-500/10 text-red-500' :
+                          triage.urgency === 'medium' ? 'bg-warning/10 text-warning' :
+                          'bg-success/10 text-success'
+                        }`}>
+                          {triage.urgency === 'high' ? 'Urgente' : 
+                           triage.urgency === 'medium' ? 'Atenção' : 'Normal'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(triage.date).toLocaleDateString('pt-BR')}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Nenhuma triagem registrada
+                </p>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="history" className="mt-4">
+            <div className="mobile-card">
+              <h3 className="font-semibold mb-3 flex items-center gap-2">
+                <FileSpreadsheet className="w-5 h-5" />
+                Histórico de Consultas
+              </h3>
+              {consultations.length > 0 ? (
+                <div className="space-y-3">
+                  {consultations.map((consultation) => (
+                    <div key={consultation.id} className="border border-border rounded-lg p-3">
+                      <p className="font-medium mb-1">{consultation.diagnosis}</p>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        {new Date(consultation.date).toLocaleDateString('pt-BR')}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {consultation.treatment}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Nenhuma consulta anterior
+                </p>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="vaccines" className="mt-4">
+            <div className="mobile-card">
+              <h3 className="font-semibold mb-3 flex items-center gap-2">
+                <Syringe className="w-5 h-5" />
+                Carteira de Vacinação
+              </h3>
+              {vaccines.length > 0 ? (
+                <div className="space-y-3">
+                  {vaccines.map((vaccine) => (
+                    <div key={vaccine.id} className="border border-border rounded-lg p-3">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-semibold">{vaccine.name}</h4>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(vaccine.date).toLocaleDateString('pt-BR')}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">Lote: {vaccine.lot}</p>
+                      {vaccine.nextDose && (
+                        <p className="text-xs text-primary mt-1">
+                          Próxima dose: {new Date(vaccine.nextDose).toLocaleDateString('pt-BR')}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Nenhuma vacina registrada
+                </p>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
 
         {/* Notes */}
         {appointment.notes && (

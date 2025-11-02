@@ -3,8 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { MobileLayout } from '@/components/MobileLayout';
 import { MobileHeader } from '@/components/MobileHeader';
 import { Button } from '@/components/ui/button';
-import { Dog, Cat, Calendar, Edit, Trash2, ChevronRight } from 'lucide-react';
+import { Dog, Cat, Calendar, Edit, Trash2, ChevronRight, Syringe, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { getVaccinesByAnimalId, getTriagesByAnimalId } from '@/data/mockData';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +31,8 @@ const AnimalDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [animal, setAnimal] = useState<Animal | null>(null);
+  const [vaccines, setVaccines] = useState<any[]>([]);
+  const [recentTriages, setRecentTriages] = useState<any[]>([]);
 
   useEffect(() => {
     // Carregar animal do localStorage
@@ -43,6 +46,13 @@ const AnimalDetails = () => {
     }
     
     setAnimal(foundAnimal);
+    
+    // Load vaccines and triages
+    const animalVaccines = getVaccinesByAnimalId(id || '');
+    setVaccines(animalVaccines);
+    
+    const animalTriages = getTriagesByAnimalId(id || '').slice(0, 3);
+    setRecentTriages(animalTriages);
   }, [id, navigate]);
 
   const handleDelete = () => {
@@ -110,19 +120,89 @@ const AnimalDetails = () => {
           </Button>
         </div>
 
-        {/* Animal History */}
+        {/* Vaccination Card */}
         <div className="mobile-card">
-          <h3 className="font-semibold mb-4">Histórico do Animal</h3>
-          <div className="space-y-3">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold flex items-center gap-2">
+              <Syringe className="w-5 h-5 text-primary" />
+              📘 Carteira de Vacinação
+            </h3>
             <Button
-              onClick={() => navigate(`/tutor/animal/${id}/history`)}
+              onClick={() => toast.info('Funcionalidade em desenvolvimento')}
+              size="sm"
               variant="outline"
-              className="w-full justify-between"
             >
-              <span>Ver Histórico Completo</span>
-              <ChevronRight className="w-4 h-4" />
+              <Plus className="w-4 h-4 mr-1" />
+              Nova Vacina
             </Button>
           </div>
+          
+          {vaccines.length > 0 ? (
+            <div className="space-y-3">
+              {vaccines.map((vaccine) => (
+                <div key={vaccine.id} className="border border-border rounded-lg p-3">
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-semibold">{vaccine.name}</h4>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(vaccine.date).toLocaleDateString('pt-BR')}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Lote: {vaccine.lot}</p>
+                  {vaccine.nextDose && (
+                    <p className="text-xs text-primary mt-1">
+                      Próxima dose: {new Date(vaccine.nextDose).toLocaleDateString('pt-BR')}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              Nenhuma vacina registrada
+            </p>
+          )}
+        </div>
+
+        {/* Recent Triages */}
+        {recentTriages.length > 0 && (
+          <div className="mobile-card">
+            <h3 className="font-semibold mb-4">Triagens Recentes</h3>
+            <div className="space-y-3">
+              {recentTriages.map((triage) => (
+                <div key={triage.id} className="border border-border rounded-lg p-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-sm font-medium">{triage.symptoms.join(', ')}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {new Date(triage.date).toLocaleDateString('pt-BR')}
+                      </p>
+                    </div>
+                    <span className={`text-xs px-2 py-1 rounded ${
+                      triage.urgency === 'high' ? 'bg-red-500/10 text-red-500' :
+                      triage.urgency === 'medium' ? 'bg-warning/10 text-warning' :
+                      'bg-success/10 text-success'
+                    }`}>
+                      {triage.urgency === 'high' ? 'Urgente' : 
+                       triage.urgency === 'medium' ? 'Atenção' : 'Normal'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Animal History */}
+        <div className="mobile-card">
+          <h3 className="font-semibold mb-4">Histórico Completo</h3>
+          <Button
+            onClick={() => navigate(`/tutor/animal/${id}/history`)}
+            variant="outline"
+            className="w-full justify-between"
+          >
+            <span>Ver Histórico Detalhado</span>
+            <ChevronRight className="w-4 h-4" />
+          </Button>
         </div>
 
         {/* Action Buttons */}

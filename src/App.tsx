@@ -16,6 +16,7 @@ import Triage from "./pages/tutor/Triage";
 import Appointments from "./pages/tutor/Appointments";
 import AppointmentNew from "./pages/tutor/AppointmentNew";
 import AppointmentDetail from "./pages/tutor/AppointmentDetail";
+import TutorConsultationDetail from "./pages/tutor/ConsultationDetail";
 import Education from "./pages/tutor/Education";
 import EducationDetail from "./pages/tutor/EducationDetail";
 import Notifications from "./pages/tutor/Notifications";
@@ -64,6 +65,7 @@ const App = () => (
             <Route path="/tutor/appointments" element={<ProtectedRoute><Appointments /></ProtectedRoute>} />
             <Route path="/tutor/appointment/new" element={<ProtectedRoute><AppointmentNew /></ProtectedRoute>} />
             <Route path="/tutor/appointment/:id" element={<ProtectedRoute><AppointmentDetail /></ProtectedRoute>} />
+            <Route path="/tutor/consultation/:id" element={<ProtectedRoute><TutorConsultationDetail /></ProtectedRoute>} />
             <Route path="/tutor/education" element={<ProtectedRoute><Education /></ProtectedRoute>} />
             <Route path="/tutor/education/:id" element={<ProtectedRoute><EducationDetail /></ProtectedRoute>} />
             <Route path="/tutor/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />

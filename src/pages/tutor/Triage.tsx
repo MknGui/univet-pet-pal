@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MobileLayout } from '@/components/MobileLayout';
 import { MobileHeader } from '@/components/MobileHeader';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { AlertCircle, CheckCircle2, Clock } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Clock, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ClinicalSign {
@@ -15,6 +16,7 @@ interface ClinicalSign {
 }
 
 const Triage = () => {
+  const navigate = useNavigate();
   const [selectedAnimal, setSelectedAnimal] = useState('');
   const [selectedSigns, setSelectedSigns] = useState<string[]>([]);
   const [result, setResult] = useState<{
@@ -162,6 +164,21 @@ const Triage = () => {
                   {result.message}
                 </p>
               </div>
+              
+              {(result.severity === 'urgent' || result.severity === 'monitor') && (
+                <div className="w-full pt-4 border-t border-border">
+                  <p className="text-sm font-medium mb-3">Recomendamos uma consulta veterinária</p>
+                  <Button
+                    onClick={() => navigate('/tutor/appointment/new', { 
+                      state: { animalId: selectedAnimal } 
+                    })}
+                    className="w-full gradient-primary"
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Agendar Consulta
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         )}

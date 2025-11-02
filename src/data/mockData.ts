@@ -34,6 +34,7 @@ export interface Consultation {
   treatment: string;
   observations: string;
   status: 'completed' | 'scheduled' | 'cancelled';
+  nextVisit?: string;
 }
 
 export interface Appointment {
@@ -69,6 +70,28 @@ export interface Notification {
   date: string;
   type: 'appointment' | 'triage' | 'consultation' | 'reminder';
   read: boolean;
+}
+
+export interface Veterinarian {
+  id: string;
+  name: string;
+  crmv: string;
+  specialty: string;
+  location: string;
+  region: string;
+  availableSlots: {
+    date: string;
+    times: string[];
+  }[];
+}
+
+export interface Vaccine {
+  id: string;
+  animalId: string;
+  name: string;
+  date: string;
+  lot: string;
+  nextDose?: string;
 }
 
 // Mock Animals
@@ -133,6 +156,12 @@ export const mockTriages: Triage[] = [
   },
 ];
 
+// Compatibility - map severity to urgency for triages
+export const getTriagesByAnimalId = (animalId: string) => 
+  mockTriages
+    .filter(t => t.animalId === animalId)
+    .map(t => ({ ...t, urgency: t.severity, symptoms: t.signs }));
+
 // Mock Consultations
 export const mockConsultations: Consultation[] = [
   {
@@ -148,6 +177,7 @@ export const mockConsultations: Consultation[] = [
     treatment: 'Repouso e medicação sintomática',
     observations: 'Retornar em 7 dias para reavaliação',
     status: 'completed',
+    nextVisit: '2025-11-27',
   },
   {
     id: 'c2',
@@ -162,6 +192,7 @@ export const mockConsultations: Consultation[] = [
     treatment: 'Dieta leve e probióticos',
     observations: 'Manter hidratação adequada',
     status: 'completed',
+    nextVisit: '2025-11-08',
   },
   {
     id: 'c3',
@@ -374,6 +405,85 @@ Use sempre produtos específicos para pets.
   },
 ];
 
+// Mock Veterinarians
+export const mockVeterinarians: Veterinarian[] = [
+  {
+    id: 'vet1',
+    name: 'Dra. Maria Santos',
+    crmv: 'CRMV-SP 12345',
+    specialty: 'Clínica Geral',
+    location: 'Clínica Veterinária Centro',
+    region: 'Centro',
+    availableSlots: [
+      { date: '2025-11-05', times: ['08:00', '09:00', '10:00', '14:00', '15:00'] },
+      { date: '2025-11-06', times: ['08:00', '09:30', '11:00', '14:30', '16:00'] },
+      { date: '2025-11-07', times: ['08:30', '10:00', '14:00', '15:30', '17:00'] },
+    ]
+  },
+  {
+    id: 'vet2',
+    name: 'Dr. João Silva',
+    crmv: 'CRMV-SP 23456',
+    specialty: 'Cirurgia',
+    location: 'Hospital Veterinário Norte',
+    region: 'Zona Norte',
+    availableSlots: [
+      { date: '2025-11-05', times: ['09:00', '10:30', '14:00', '15:30'] },
+      { date: '2025-11-06', times: ['08:30', '10:00', '13:30', '15:00'] },
+      { date: '2025-11-07', times: ['09:00', '11:00', '14:30', '16:00'] },
+    ]
+  },
+  {
+    id: 'vet3',
+    name: 'Dr. Pedro Costa',
+    crmv: 'CRMV-SP 34567',
+    specialty: 'Dermatologia',
+    location: 'Clínica Pet Sul',
+    region: 'Zona Sul',
+    availableSlots: [
+      { date: '2025-11-05', times: ['08:00', '10:00', '14:00', '16:00'] },
+      { date: '2025-11-06', times: ['09:00', '11:00', '14:00', '15:30'] },
+      { date: '2025-11-07', times: ['08:00', '10:30', '13:30', '15:00'] },
+    ]
+  }
+];
+
+// Mock Vaccines
+export const mockVaccines: Vaccine[] = [
+  {
+    id: 'vac1',
+    animalId: '1',
+    name: 'V10 (Múltipla)',
+    date: '2024-06-15',
+    lot: 'ABC123456',
+    nextDose: '2025-06-15'
+  },
+  {
+    id: 'vac2',
+    animalId: '1',
+    name: 'Antirrábica',
+    date: '2024-07-20',
+    lot: 'XYZ789012',
+    nextDose: '2025-07-20'
+  },
+  {
+    id: 'vac3',
+    animalId: '2',
+    name: 'V4 (Múltipla)',
+    date: '2024-05-10',
+    lot: 'DEF456789',
+    nextDose: '2025-05-10'
+  },
+  {
+    id: 'vac4',
+    animalId: '2',
+    name: 'Antirrábica',
+    date: '2024-06-05',
+    lot: 'GHI345678',
+    nextDose: '2025-06-05'
+  }
+];
+
 // Mock Notifications
 export const mockNotifications: Notification[] = [
   {
@@ -412,8 +522,9 @@ export const mockNotifications: Notification[] = [
 
 // Helper functions
 export const getAnimalById = (id: string) => mockAnimals.find(a => a.id === id);
-export const getTriagesByAnimalId = (animalId: string) => mockTriages.filter(t => t.animalId === animalId);
 export const getConsultationsByAnimalId = (animalId: string) => mockConsultations.filter(c => c.animalId === animalId);
 export const getAppointmentsByTutorId = (tutorId: string) => mockAppointments.filter(a => a.tutorId === tutorId);
 export const getAppointmentsByVetId = (vetId: string) => mockAppointments.filter(a => a.vetId === vetId);
 export const getUnreadNotifications = () => mockNotifications.filter(n => !n.read);
+export const getVaccinesByAnimalId = (animalId: string) => mockVaccines.filter(v => v.animalId === animalId);
+export const getVeterinarianById = (vetId: string) => mockVeterinarians.find(v => v.id === vetId);
